@@ -1,0 +1,192 @@
+/*
+  File origin: VS1LAB A1b  
+
+  CSS style is BEM. Classes used for CSS, IDs for JavaScript querying (future use).
+  CSS variables used for clarity and themability (e.g. through SSR). 
+  Inherited box sizing used for ease of including 3rd party content-box components.
+*/
+
+/* Global styling */
+
+html {
+  box-sizing: border-box;
+}
+
+#map {
+  height: 500px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+
+  /* This approach prevents issues with 3rd party content-box components */
+  box-sizing: inherit;
+}
+
+
+/* Variables (example: see declaration for "a" below) */
+
+:root {
+  --link-color: #00B7FF;
+  --background-color: #efefef;
+  --border-color: #cdcdcd;
+  --gray-color: #666;
+}
+
+
+/* HTML element styles */
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--link-color);
+}
+
+/* Styles for other HTML elements */
+
+*[hidden] { display: none; }
+
+fieldset {
+  padding: .6rem;
+  margin: .4rem;
+  display: flex;
+  gap: .3rem;
+  flex-direction: column;
+}
+
+legend {
+  font-weight: bold;
+}
+
+input {
+  padding: .5rem;
+  margin-bottom: .5rem;
+  width: 100%;
+  max-width: 25em;
+  display: block;
+}
+
+/* Grid styles (no changes required) */
+
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.col-1  { width: calc(8.33% - 1rem);  }
+.col-2  { width: calc(16.66% - 1rem); }
+.col-3  { width: calc(25% - 1rem);    }
+.col-4  { width: calc(33.33% - 1rem); }
+.col-5  { width: calc(41.66% - 1rem); }
+.col-6  { width: calc(50% - 1rem);    }
+.col-7  { width: calc(58.33% - 1rem); }
+.col-8  { width: calc(66.66% - 1rem); }
+.col-9  { width: calc(75% - 1rem);    }
+.col-10 { width: calc(83.33% - 1rem); }
+.col-11 { width: calc(91.66% - 1rem); }
+.col-12 { width: calc(100% - 1rem);   }
+
+
+/* Styles for Header Component */
+
+.header {
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+.header__image {
+  height: 3rem;
+}
+
+
+/* Styles for Main Component */
+
+.main {
+  /* flex: 10; */
+  padding: 3rem;
+}
+
+/* Styles for Tagging component */
+
+#tag-form-field input {
+  max-width: none;
+}
+
+/* Styles for Discovery component */
+
+#discoveryResults li {
+  list-style-type: none;
+  border: .1rem solid var(--border-color) ;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--background-color);
+  color: var(--link-color);
+}
+
+.discovery__wrapper {
+  padding: 1rem;
+}
+
+.discovery__map img {
+  max-width: 100%;
+  width: 100%;
+  display: block;
+}
+
+
+/* Styles for Footer Component */
+
+.footer {
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
+
+
+/* Media Queries */
+
+@media (width <= 900px)  {
+  .col-1  { width: auto; }
+  .col-2  { width: auto; }
+  .col-3  { width: auto; }
+  .col-4  { width: auto; }
+  .col-5  { width: auto; }
+  .col-6  { width: auto; }
+  .col-7  { width: auto; }
+  .col-8  { width: auto; }
+  .col-9  { width: auto; }
+  .col-10 { width: auto; }
+  .col-11 { width: auto; }
+  .col-12 { width: auto; }
+
+  input {
+    max-width: none;
+  }
+
+  .main {
+    flex-direction: column;
+  }
+
+  .discovery__wrapper {
+    flex-direction: column;
+  }
+}
+
+@media (width <= 410px)  {
+  .header {
+    flex-direction: column;
+  }
+
+  .main {
+    padding: 0px;
+  }
+}
