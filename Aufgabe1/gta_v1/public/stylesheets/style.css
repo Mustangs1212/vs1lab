@@ -44,10 +44,29 @@ a {
   color: var(--link-color);
 }
 
-/* ### TODO ### Styles for other HTML elements */
+/* Styles for other HTML elements */
 
-/* ... your code here ... */
+*[hidden] { display: none; }
 
+fieldset {
+  padding: .6rem;
+  margin: .4rem;
+  display: flex;
+  gap: .3rem;
+  flex-direction: column;
+}
+
+legend {
+  font-weight: bold;
+}
+
+input {
+  padding: .5rem;
+  margin-bottom: .5rem;
+  width: 100%;
+  max-width: 25em;
+  display: block;
+}
 
 /* Grid styles (no changes required) */
 
@@ -58,80 +77,112 @@ a {
   flex: 1;
 }
 
-.col-1 {
-  width: calc(8.33% - 1rem);
+.col-1  { width: calc(8.33% - 1rem);  }
+.col-2  { width: calc(16.66% - 1rem); }
+.col-3  { width: calc(25% - 1rem);    }
+.col-4  { width: calc(33.33% - 1rem); }
+.col-5  { width: calc(41.66% - 1rem); }
+.col-6  { width: calc(50% - 1rem);    }
+.col-7  { width: calc(58.33% - 1rem); }
+.col-8  { width: calc(66.66% - 1rem); }
+.col-9  { width: calc(75% - 1rem);    }
+.col-10 { width: calc(83.33% - 1rem); }
+.col-11 { width: calc(91.66% - 1rem); }
+.col-12 { width: calc(100% - 1rem);   }
+
+
+/* Styles for Header Component */
+
+.header {
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--background-color);
 }
 
-.col-2 {
-  width: calc(16.66% - 1rem);
-}
-
-.col-3 {
-  width: calc(25% - 1rem);
-}
-
-.col-4 {
-  width: calc(33.33% - 1rem);
-}
-
-.col-5 {
-  width: calc(41.66% - 1rem);
-}
-
-.col-6 {
-  width: calc(50% - 1rem);
-}
-
-.col-7 {
-  width: calc(58.33% - 1rem);
-}
-
-.col-8 {
-  width: calc(66.66% - 1rem);
-}
-
-.col-9 {
-  width: calc(75% - 1rem);
-}
-
-.col-10 {
-  width: calc(83.33% - 1rem);
-}
-
-.col-11 {
-  width: calc(91.66% - 1rem);
-}
-
-.col-12 {
-  width: calc(100% - 1rem);
+.header__image {
+  height: 3rem;
 }
 
 
-/* ### TODO ### Styles for Header Component */
+/* Styles for Main Component */
 
-/* ... your code here ... */
+.main {
+  /* flex: 10; */
+  padding: 3rem;
+}
+
+/* Styles for Tagging component */
+
+#tag-form-field input {
+  max-width: none;
+}
+
+/* Styles for Discovery component */
+
+#discoveryResults li {
+  list-style-type: none;
+  border: .1rem solid var(--border-color) ;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--background-color);
+  color: var(--link-color);
+}
+
+.discovery__wrapper {
+  padding: 1rem;
+}
+
+.discovery__map img {
+  max-width: 100%;
+  width: 100%;
+  display: block;
+}
 
 
-/* ### TODO ### Styles for Main Component */
+/* Styles for Footer Component */
 
-/* ... your code here ... */
-
-
-/* ### TODO ### Styles for Tagging component */
-
-/* ... your code here ... */
-
-
-/* ### TODO ### Styles for Discovery component */
-
-/* ... your code here ... */
+.footer {
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--background-color);
+}
 
 
-/* ### TODO ### Styles for Footer Component */
+/* Media Queries */
 
-/* ... your code here ... */
+@media (width <= 900px)  {
+  .col-1  { width: auto; }
+  .col-2  { width: auto; }
+  .col-3  { width: auto; }
+  .col-4  { width: auto; }
+  .col-5  { width: auto; }
+  .col-6  { width: auto; }
+  .col-7  { width: auto; }
+  .col-8  { width: auto; }
+  .col-9  { width: auto; }
+  .col-10 { width: auto; }
+  .col-11 { width: auto; }
+  .col-12 { width: auto; }
 
+  input {
+    max-width: none;
+  }
 
-/* ### TODO ### Media Queries */
+  .main {
+    flex-direction: column;
+  }
 
-/* ... your code here ... */
+  .discovery__wrapper {
+    flex-direction: column;
+  }
+}
+
+@media (width <= 410px)  {
+  .header {
+    flex-direction: column;
+  }
+
+  .main {
+    padding: 0px;
+  }
+}
