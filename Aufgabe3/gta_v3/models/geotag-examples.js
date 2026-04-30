@@ -1,19 +1,12 @@
 // File origin: VS1LAB A3
 
 /**
- * This script is a template for exercise VS1lab/Aufgabe3
- * Complete all TODOs in the code documentation.
- */
-
-/**
  * A class representing example geoTags at HKA
- * 
- * TODO: populate your InMemoryGeoTagStore with these tags
- * 
  */
 class GeoTagExamples {
     /**
      * Provides some geoTag data
+     * @returns {(string | number)[][]}
      */
     static get tagList() {
         return [
