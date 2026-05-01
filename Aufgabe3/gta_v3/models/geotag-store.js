@@ -29,7 +29,7 @@ class InMemoryGeoTagStore{
      * radius to check if a point is nearby in km
      * @Type {number}
      */
-    #nearbyRadius = 5;
+    nearbyRadius = 5;
 
     /**
      * add a geotag to the store
@@ -43,19 +43,24 @@ class InMemoryGeoTagStore{
     }
 
     /**
-     * removes a GeoTag with the name, name
-     * @param {String} name
-     * @returns {GeoTag | undefined} the deleted GeoTag or undefined if no GeoTag had the name
+     * removes all GeoTags with the name of filter
+     * @param {String} filter
+     * @returns {number} the number of removed GeoTags
      */
-    removeGeoTag(name) {
-        let idx = this.#geotags.findIndex((el) => {
-            return el.name === name;
+    removeGeoTag(filter) {
+        const oldLen = this.#geotags.length;
+
+        this.#geotags = this.#geotags.filter((tag) => {
+            return tag.name !== filter;
         })
 
-        let oldEl = this.#geotags[idx];
-        if (idx !== -1) this.#geotags.splice(idx, 1);
+        const remCount = oldLen - this.#geotags.length;
 
-        return oldEl;
+        const colorGreen = "\x1b[32m";
+        const colorReset = "\x1b[0m";
+        console.log(`${colorGreen}[GeoTagStore [REMOVE] ]${colorReset} ${remCount} * ${filter}`)
+
+        return remCount;
     }
 
     /**
@@ -92,7 +97,7 @@ class InMemoryGeoTagStore{
      * @returns {boolean} true if points are nearby, false otherwise
      */
     #isNearby(lat1, lon1, lat2, lon2) {
-        return this.#computeDistance(lat1, lon1, lat2, lon2) <= this.#nearbyRadius;
+        return this.#computeDistance(lat1, lon1, lat2, lon2) <= this.nearbyRadius;
     }
 
     /**
