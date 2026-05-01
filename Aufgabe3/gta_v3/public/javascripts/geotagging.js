@@ -36,38 +36,47 @@ function updateLocation() {
 
     console.log("update Location ...");
 
-    let manager = new MapManager();
     let lat;
     let lon;
-    LocationHelper.findLocation((helper) => {
-        const tagLatitude = document.getElementById("tag-form-lat");
-        const tagLongitude = document.getElementById("tag-form-lon");
-        const disLatitude = document.getElementById("discov-form-lat");
-        const disLongitude = document.getElementById("discov-form-lon");
-        lat = helper.latitude;
-        lon = helper.longitude;
-        tagLatitude.value = lat;
-        tagLongitude.value = lon;
-        disLatitude.value = lat;
-        disLongitude.value = lon;
-        manager.initMap(lat, lon);
-        manager.updateMarkers(lat, lon);
 
-        document.getElementById("mapView").remove();
-        document.querySelector("#map span").remove();
-    });
+    const tagLatitude = document.getElementById("tag-form-lat");
+    const tagLongitude = document.getElementById("tag-form-lon");
+    const disLatitude = document.getElementById("discov-form-lat");
+    const disLongitude = document.getElementById("discov-form-lon");
+
+    const tagLatVal = parseFloat(tagLatitude.value);
+    const tagLonVal = parseFloat(tagLongitude.value);
+    const disLatVal = parseFloat(disLatitude.value);
+    const disLonVal = parseFloat(disLongitude.value);
+
+    if (
+        isNaN(tagLatVal) || isNaN(tagLonVal) || isNaN(disLatVal) || isNaN(disLonVal)
+        || tagLatVal !== disLatVal || tagLonVal !== disLonVal
+    ) {
+        LocationHelper.findLocation((helper) => {
+            lat = helper.latitude;
+            lon = helper.longitude;
+            tagLatitude.value = lat;
+            tagLongitude.value = lon;
+            disLatitude.value = lat;
+            disLongitude.value = lon;
+        });
+    } else {
+        lat = tagLatVal;
+        lon = tagLonVal;
+    }
+
+    const taglist_json = document.getElementById("map").dataset.tags;
+    const taglist = JSON.parse(taglist_json);
+
+    let manager = new MapManager();
+    manager.initMap(lat, lon);
+    manager.updateMarkers(lat, lon, taglist);
+    document.getElementById("mapView").remove();
+    document.querySelector("#map span").remove();
 }
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
-
-    const tagLat = parseFloat(document.getElementById("tag-form-lat").value);
-    const tagLon = parseFloat(document.getElementById("tag-form-lon").value);
-
-    const disLat = parseFloat(document.getElementById("discov-form-lat").value);
-    const disLon = parseFloat(document.getElementById("discov-form-lon").value);
-
-    if (isNaN(tagLat) || isNaN(tagLon) || isNaN(disLat) || isNaN(disLon)) {
-        updateLocation();
-    }
+    updateLocation();
 });
