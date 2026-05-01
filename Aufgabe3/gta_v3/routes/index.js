@@ -31,7 +31,6 @@ const geoTagStore= new GeoTagStore();
 GeoTagExamples.forEach((example) =>
     geoTagStore.addGeoTag(new GeoTag( example[1], example[2], example[0], example[3] ))
 )
-console.log("new geoTagStore created!!!!!");
 
 /**
  * Route '/' for HTTP 'GET' requests.
@@ -68,7 +67,7 @@ router.post("/tagging", (req, res) => {
   let lat = parseFloat(body.latitude);
   let lon = parseFloat(body.longitude);
   let name = body.name;
-  let hash = body.hash?.charAt(0) === '#' ? body.hash : "";
+  let hash = body.hashtag?.charAt(0) === '#' ? body.hashtag : "";
 
   if (isNaN(lat) || isNaN(lon) || !name) {
     res.render('index', { lat: "", lon: "", taglist: [] })
@@ -77,7 +76,7 @@ router.post("/tagging", (req, res) => {
 
   geoTagStore.addGeoTag(new GeoTag(lat, lon, name, hash));
 
-  res.render('index', { lat: lat, lon: lon, taglist: [geoTagStore.getNearbyGeoTags(lat, lon)] })
+  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.getNearbyGeoTags(lat, lon) })
 })
 
 /**
@@ -109,7 +108,7 @@ router.post("/discovery", (req, res) => {
     return
   }
 
-  res.render('index', { lat: lat, lon: lon, taglist: [geoTagStore.searchNearbyGeoTags(lat, lon, searchterm)] })
+  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.searchNearbyGeoTags(lat, lon, searchterm) })
 })
 
 module.exports = router;
