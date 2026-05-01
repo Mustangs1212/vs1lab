@@ -34,11 +34,6 @@ GEOLOCATION_API = navigator.geolocation;
 
 function updateLocation() {
 
-    console.log("update Location ...");
-
-    let lat;
-    let lon;
-
     const tagLatitude = document.getElementById("tag-form-lat");
     const tagLongitude = document.getElementById("tag-form-lon");
     const disLatitude = document.getElementById("discov-form-lat");
@@ -53,18 +48,28 @@ function updateLocation() {
         isNaN(tagLatVal) || isNaN(tagLonVal) || isNaN(disLatVal) || isNaN(disLonVal)
         || tagLatVal !== disLatVal || tagLonVal !== disLonVal
     ) {
+        console.log("update Location ...");
+
         LocationHelper.findLocation((helper) => {
-            lat = helper.latitude;
-            lon = helper.longitude;
+            const lat = helper.latitude;
+            const lon = helper.longitude;
             tagLatitude.value = lat;
             tagLongitude.value = lon;
             disLatitude.value = lat;
             disLongitude.value = lon;
+
+            updateMap(lat, lon);
         });
+
     } else {
-        lat = tagLatVal;
-        lon = tagLonVal;
+        console.log("use old Location");
+        updateMap(tagLatVal, tagLonVal);
     }
+
+}
+
+function updateMap(lat, lon) {
+    console.log(`lat: ${lat}, lon: ${lon}`)
 
     const taglist_json = document.getElementById("map").dataset.tags;
     const taglist = JSON.parse(taglist_json);
