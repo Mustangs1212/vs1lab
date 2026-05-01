@@ -1,7 +1,5 @@
 // File origin: VS1LAB A3
 
-// TODO: TEST
-
 /**
  * A class for in-memory-storage of geotags
  * 
@@ -39,6 +37,9 @@ class InMemoryGeoTagStore{
      */
     addGeoTag(geotag) {
         this.#geotags.push(geotag);
+        const colorGreen = "\x1b[32m";
+        const colorReset = "\x1b[0m";
+        console.log(`${colorGreen}[GeoTagStore [ADD] ]${colorReset} ${geotag}`)
     }
 
     /**
