@@ -9,22 +9,22 @@ class GeoTag {
     /**
      * @type {number}
      */
-    #latitude;
+    latitude;
 
     /**
      * @type {number}
      */
-    #longitude;
+    longitude;
 
     /**
      * @type {string}
      */
-    #name;
+    name;
 
     /**
      * @type {string}
      */
-    #hash;
+    hashtag;
 
     /**
      *
@@ -34,38 +34,14 @@ class GeoTag {
      * @param {string} hash
      */
     constructor(latitude, longitude, name, hash) {
-        this.#latitude = latitude;
-        this.#longitude = longitude;
-        this.#name = name;
-        this.#hash = hash;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+        this.hashtag = hash;
     }
 
-    /**
-     * @returns {number}
-     */
-    get latitude() {
-        return this.#latitude;
-    }
-
-    /**
-     * @returns {number}
-     */
-    get longitude() {
-        return this.#longitude;
-    }
-
-    /**
-     * @returns {string}
-     */
-    get name() {
-        return this.#name;
-    }
-
-    /**
-     * @returns {string}
-     */
-    get hash() {
-        return this.#hash;
+    toString() {
+        return `GeoTag: {lat=${this.latitude}, lon=${this.longitude}, name="${this.name}", hash="${this.hashtag}"}`;
     }
 }
 
