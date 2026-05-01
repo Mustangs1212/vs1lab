@@ -76,10 +76,12 @@ class InMemoryGeoTagStore{
      * @return {GeoTag[]}
      */
     searchNearbyGeoTags(latitude, longitude, filter) {
+        if (!filter) return this.getNearbyGeoTags(latitude, longitude);
+
         return this.#geotags.filter((tag) =>
             this.#isNearby(latitude, longitude, tag.latitude, tag.longitude)
-            && ( tag.name.includes(filter) || tag.hash.includes(filter) )
-        )
+            && ( tag.name.includes(filter) || tag.hashtag.includes(filter) )
+        );
     }
 
     /**
