@@ -33,6 +33,9 @@ var GEOLOCATION_API = {
 GEOLOCATION_API = navigator.geolocation;
 
 function updateLocation() {
+
+    console.log("update Location ...");
+
     let manager = new MapManager();
     let lat;
     let lon;

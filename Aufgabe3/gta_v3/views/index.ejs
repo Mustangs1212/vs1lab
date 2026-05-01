@@ -40,10 +40,10 @@
                         <legend>Add a new GeoTag</legend>
 
                         <label for="tag-form-lat"> Latitude: </label>
-                        <input id="tag-form-lat" name="latitude" type="number" value="49.01379" readonly>
+                        <input id="tag-form-lat" name="latitude" type="number" value="<%= lat %>" readonly>
 
                         <label for="tag-form-lon"> Longitude: </label>
-                        <input id="tag-form-lon" name="longitude" type="number" value="8.390071" readonly>
+                        <input id="tag-form-lon" name="longitude" type="number" value="<%= lon %>" readonly>
 
                         <label for="tag-form-name"> Name: </label>
                         <input id="tag-form-name" name="name" type="text" placeholder="e.g. Central Berlin" required maxlength=10 pattern="[A-Za-z]+">
@@ -68,8 +68,8 @@
                     <fieldset id="discovery__field">
                         <legend>Search</legend>
 
-                        <input id="discov-form-lat"  name="latitude"  type="number" value="49.01379" readonly hidden>
-                        <input id="discov-form-lon"  name="longitude" type="number" value="8.390071" readonly hidden>
+                        <input id="discov-form-lat"  name="latitude"  type="number" value="<%= lat %>" readonly hidden>
+                        <input id="discov-form-lon"  name="longitude" type="number" value="<%= lon %>" readonly hidden>
 
                         <label for="search-form-searchterm"> Search term or keywords: </label>
                         <input id="search-form-searchterm" name="searchterm" type="text" maxlength=11 placeholder="e.g. Berlin"  pattern="#?[A-Za-z]{1,10}">

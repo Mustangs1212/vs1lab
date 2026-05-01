@@ -42,9 +42,8 @@ console.log("new geoTagStore created!!!!!");
  * As response, the ejs-template is rendered without geotag objects.
  */
 
-// TODO: extend the following route example if necessary
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+  res.render('index', { lat: "", lon: "", taglist: [] })
 });
 
 /**
@@ -72,13 +71,13 @@ router.post("/tagging", (req, res) => {
   let hash = body.hash?.charAt(0) === '#' ? body.hash : "";
 
   if (isNaN(lat) || isNaN(lon) || !name) {
-    res.render('index', { taglist: [] })
+    res.render('index', { lat: "", lon: "", taglist: [] })
     return;
   }
 
   geoTagStore.addGeoTag(new GeoTag(lat, lon, name, hash));
 
-  res.render('index', { taglist: [geoTagStore.getNearbyGeoTags(lat, lon)] })
+  res.render('index', { lat: lat, lon: lon, taglist: [geoTagStore.getNearbyGeoTags(lat, lon)] })
 })
 
 /**
@@ -106,11 +105,11 @@ router.post("/discovery", (req, res) => {
   let searchterm = body.searchterm;
 
   if (isNaN(lat) || isNaN(lon)) {
-    res.render('index', { taglist: [] })
+    res.render('index', { lat: "", lon: "", taglist: [] })
     return
   }
 
-  res.render('index', { taglist: [geoTagStore.searchNearbyGeoTags(lat, lon, searchterm)] })
+  res.render('index', { lat: lat, lon: lon, taglist: [geoTagStore.searchNearbyGeoTags(lat, lon, searchterm)] })
 })
 
 module.exports = router;
