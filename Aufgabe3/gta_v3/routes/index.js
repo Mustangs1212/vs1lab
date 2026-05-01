@@ -62,7 +62,24 @@ router.get('/', (req, res) => {
  * by radius around a given location.
  */
 
-// TODO: ... your code here ...
+router.post("/tagging", (req, res) => {
+
+  const body = req.body;
+
+  let lat = parseFloat(body.latitude);
+  let lon = parseFloat(body.longitude);
+  let name = body.name;
+  let hash = body.hash?.charAt(0) === '#' ? body.hash : "";
+
+  if (isNaN(lat) || isNaN(lon) || !name) {
+    res.render('index', { taglist: [] })
+    return;
+  }
+
+  geoTagStore.addGeoTag(new GeoTag(lat, lon, name, hash));
+
+  res.render('index', { taglist: [geoTagStore.getNearbyGeoTags(lat, lon)] })
+})
 
 /**
  * Route '/discovery' for HTTP 'POST' requests.
@@ -80,6 +97,20 @@ router.get('/', (req, res) => {
  * by radius and keyword.
  */
 
-// TODO: ... your code here ...
+router.post("/discovery", (req, res) => {
+
+  const body = req.body;
+
+  let lat = parseFloat(body.latitude);
+  let lon = parseFloat(body.longitude);
+  let searchterm = body.searchterm;
+
+  if (isNaN(lat) || isNaN(lon)) {
+    res.render('index', { taglist: [] })
+    return
+  }
+
+  res.render('index', { taglist: [geoTagStore.searchNearbyGeoTags(lat, lon, searchterm)] })
+})
 
 module.exports = router;
