@@ -21,7 +21,7 @@ const GeoTagExamples = require("../models/geotag-examples").tagList;
  * The GeoTagStore to use
  * @type {InMemoryGeoTagStore}
  */
-const geoTagStore= new GeoTagStore();
+const geoTagStore = new GeoTagStore();
 
 
 /**
@@ -44,8 +44,6 @@ router.get('/', (req, res) => {
   res.render('index', { lat: "", lon: "", taglist: [] })
 });
 
-// API routes (A4)
-
 /**
  * Route '/api/geotags' for HTTP 'GET' requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -58,7 +56,14 @@ router.get('/', (req, res) => {
  * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
  */
 
-// TODO: ... your code here ...
+router.get("/api/geotags", (req, res) => {
+  res.contentType("application/json");
+  res.send(JSON.stringify(geoTagStore.searchNearbyGeoTags(
+    req.query.latitude,
+    req.query.longitude,
+    req.query.searchterm
+  )));
+});
 
 
 /**
@@ -72,7 +77,25 @@ router.get('/', (req, res) => {
  * The new resource is rendered as JSON in the response.
  */
 
-// TODO: ... your code here ...
+router.post("/api/geotags", (req, res) => {
+
+  const json = req.body;
+
+  if (!GeoTag.isValidGeoTag(json))
+    return res.status(400).contentType("text/plain").send("in the request body is not a GeoTag");
+
+  let tag = new GeoTag(
+    json.latitude,
+    json.longitude,
+    json.name,
+    json.hashtag
+  );
+
+  geoTagStore.addGeoTag(tag);
+
+  res.send(tag);
+
+});
 
 
 /**

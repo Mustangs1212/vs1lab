@@ -40,6 +40,18 @@ class GeoTag {
         this.hashtag = hash;
     }
 
+    static isValidGeoTag(obj) {
+        console.log(typeof obj.hashtag)
+
+        return (
+            obj &&
+            typeof obj.latitude  === "number" &&
+            typeof obj.longitude === "number" &&
+            (typeof obj.name     === "string" && obj.name.length <= 10) &&
+            ((typeof obj.hashtag === "string" && obj.hashtag.length <= 11 && obj.hashtag[0] == '#') || typeof obj.hashtag   === "undefined")
+        )
+    }
+
     toString() {
         return `GeoTag: {lat=${this.latitude}, lon=${this.longitude}, name="${this.name}", hash="${this.hashtag}"}`;
     }

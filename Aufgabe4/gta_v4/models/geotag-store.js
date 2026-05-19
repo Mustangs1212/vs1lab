@@ -1,5 +1,7 @@
 // File origin: VS1LAB A3
 
+const GeoTag = require("./geotag");
+
 /**
  * A class for in-memory-storage of geotags
  * 
@@ -70,7 +72,7 @@ class InMemoryGeoTagStore{
      */
     getNearbyGeoTags(latitude, longitude) {
         return this.#geotags.filter((tag) =>
-            this.#isNearby(latitude, longitude, tag.latitude, tag.longitude)
+            this.#geoTagFilter(latitude, longitude, null, tag)
         )
     }
 
@@ -84,9 +86,26 @@ class InMemoryGeoTagStore{
         if (!filter) return this.getNearbyGeoTags(latitude, longitude);
 
         return this.#geotags.filter((tag) =>
-            this.#isNearby(latitude, longitude, tag.latitude, tag.longitude)
-            && ( tag.name.includes(filter) || tag.hashtag.includes(filter) )
+            this.#geoTagFilter(latitude, longitude, filter, tag)
         );
+    }
+
+    /**
+     * @param {number} latitude
+     * @param {number} longitude
+     * @param {String} filter a name or hash of a geotag
+     * @param {GeoTag} tag
+     * @return {GeoTag[]}
+     */
+    #geoTagFilter(latitude, longitude, filter, tag) {
+
+        if (filter != null && !(tag.name.includes(filter) || tag.hashtag.includes(filter)))
+            return false;
+
+        if (latitude != null && longitude != null && !this.#isNearby(latitude, longitude, tag.latitude, tag.longitude))
+            return false;
+
+        return true;
     }
 
     /**

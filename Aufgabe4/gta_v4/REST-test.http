@@ -1,0 +1,39 @@
+
+### all tags
+
+http://127.0.0.1:3000/api/geotags
+
+### filter by name
+
+http://127.0.0.1:3000/api/geotags?searchterm=Building
+
+### filter by location
+
+http://127.0.0.1:3000/api/geotags?latitude=49.014993&longitude=8.390049
+
+### filter by location (with no tags nearby)
+
+http://127.0.0.1:3000/api/geotags?latitude=0&longitude=0
+
+### filter by location (with no tags nearby)
+
+POST http://127.0.0.1:3000/api/geotags
+content-type: application/json
+
+{
+    "name": "49.01379",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT",
+    "longitude": 8.404435
+}
+
+###
+
+POST http://127.0.0.1:3000/api/geotags
+content-type: application/json
+
+{
+    "latitude": 49.01379,
+    "longitude": 8.404435,
+    "name": "Castle",
+    "hashtag": "#moin"
+}
