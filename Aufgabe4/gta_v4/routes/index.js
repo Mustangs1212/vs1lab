@@ -13,21 +13,23 @@
 const express = require('express');
 const router = express.Router();
 
-/**
- * The module "geotag" exports a class GeoTagStore. 
- * It represents geotags.
- */
-// eslint-disable-next-line no-unused-vars
 const GeoTag = require('../models/geotag');
+const GeoTagStore = require('../models/geotag-store');
+const GeoTagExamples = require("../models/geotag-examples").tagList;
 
 /**
- * The module "geotag-store" exports a class GeoTagStore. 
- * It provides an in-memory store for geotag objects.
+ * The GeoTagStore to use
+ * @type {InMemoryGeoTagStore}
  */
-// eslint-disable-next-line no-unused-vars
-const GeoTagStore = require('../models/geotag-store');
+const geoTagStore= new GeoTagStore();
 
-// App routes (A3)
+
+/**
+ *  files the store with the example Data from GeoTagExamples
+ */
+GeoTagExamples.forEach((example) =>
+    geoTagStore.addGeoTag(new GeoTag( example[1], example[2], example[0], example[3] ))
+)
 
 /**
  * Route '/' for HTTP 'GET' requests.
@@ -39,7 +41,7 @@ const GeoTagStore = require('../models/geotag-store');
  */
 
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+  res.render('index', { lat: "", lon: "", taglist: [] })
 });
 
 // API routes (A4)
