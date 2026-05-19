@@ -57,12 +57,11 @@ router.get('/', (req, res) => {
  */
 
 router.get("/api/geotags", (req, res) => {
-  res.contentType("application/json");
-  res.send(JSON.stringify(geoTagStore.searchNearbyGeoTags(
+  res.send(geoTagStore.searchNearbyGeoTags(
     req.query.latitude,
     req.query.longitude,
     req.query.searchterm
-  )));
+  ));
 });
 
 
@@ -82,7 +81,7 @@ router.post("/api/geotags", (req, res) => {
   const json = req.body;
 
   if (!GeoTag.isValidGeoTag(json))
-    return res.status(400).contentType("text/plain").send("in the request body is not a GeoTag");
+    return res.sendStatus(400);
 
   let tag = new GeoTag(
     json.latitude,
@@ -108,8 +107,15 @@ router.post("/api/geotags", (req, res) => {
  * The requested tag is rendered as JSON in the response.
  */
 
-// TODO: ... your code here ...
+router.get("/api/geotags/:id", (req, res) => {
+  
+  let tag = geoTagStore.getGeoTagById(req.params.id)
+  if (tag === null)
+    return res.sendStatus(404);
 
+  res.send(geoTagStore.getGeoTagById(req.params.id));
+});
+  
 
 /**
  * Route '/api/geotags/:id' for HTTP 'PUT' requests.
@@ -125,7 +131,26 @@ router.post("/api/geotags", (req, res) => {
  * The updated resource is rendered as JSON in the response. 
  */
 
-// TODO: ... your code here ...
+router.put("/api/geotags/:id", (req, res) => {
+
+  const json = req.body;
+
+  if (!GeoTag.isValidGeoTag(json))
+    return res.sendStatus(400);
+
+  let tag = new GeoTag(
+    json.latitude,
+    json.longitude,
+    json.name,
+    json.hashtag
+  );
+  
+  let tagUpdated = geoTagStore.updateGeoTag(tag, req.params.id);
+  if (tagUpdated === null)
+    return res.sendStatus(404);
+
+  res.send(tagUpdated);
+});
 
 
 /**
@@ -139,6 +164,14 @@ router.post("/api/geotags", (req, res) => {
  * The deleted resource is rendered as JSON in the response.
  */
 
-// TODO: ... your code here ...
+router.delete("/api/geotags/:id", (req, res) => {
+  
+  let tag = geoTagStore.removeGeoTagById(req.params.id);
+  if (tag=== null)
+    return res.sendStatus(404);
+
+  res.send(tag);
+});
+
 
 module.exports = router;

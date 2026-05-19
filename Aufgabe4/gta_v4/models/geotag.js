@@ -9,6 +9,11 @@ class GeoTag {
     /**
      * @type {number}
      */
+    id;
+
+    /**
+     * @type {number}
+     */
     latitude;
 
     /**
@@ -32,8 +37,10 @@ class GeoTag {
      * @param {number} longitude
      * @param {string} name
      * @param {string} hash
+     * @param {number} id
      */
-    constructor(latitude, longitude, name, hash) {
+    constructor(latitude, longitude, name, hash, id) {
+        this.id = id;
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
@@ -53,7 +60,7 @@ class GeoTag {
     }
 
     toString() {
-        return `GeoTag: {lat=${this.latitude}, lon=${this.longitude}, name="${this.name}", hash="${this.hashtag}"}`;
+        return `GeoTag: {id=${this.id}, lat=${this.latitude}, lon=${this.longitude}, name="${this.name}", hash="${this.hashtag}"}`;
     }
 }
 

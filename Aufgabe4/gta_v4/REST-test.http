@@ -37,3 +37,23 @@ content-type: application/json
     "name": "Castle",
     "hashtag": "#moin"
 }
+
+###
+
+http://127.0.0.1:3000/api/geotags/-1
+
+###
+
+PUT http://127.0.0.1:3000/api/geotags/1
+content-type: application/json
+
+{
+    "latitude": 49.01379,
+    "longitude": 8.404435,
+    "name": "Castle",
+    "hashtag": "moin"
+}
+
+###
+
+DELETE  http://127.0.0.1:3000/api/geotags/1

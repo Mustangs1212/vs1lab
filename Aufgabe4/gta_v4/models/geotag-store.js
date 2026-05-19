@@ -31,17 +31,40 @@ class InMemoryGeoTagStore{
      * radius to check if a point is nearby in km
      * @Type {number}
      */
-    nearbyRadius = 5;
+    static nearbyRadius = 5;
+
+    /**
+     * @Type {number}
+     */
+    static #nextId = 0;
 
     /**
      * add a geotag to the store
      * @param {GeoTag} geotag
+     * @returns {number} id of the geoTag
      */
     addGeoTag(geotag) {
+
+        geotag.id = InMemoryGeoTagStore.#nextId;
+        InMemoryGeoTagStore.#nextId++;
+
         this.#geotags.push(geotag);
+
         const colorGreen = "\x1b[32m";
         const colorReset = "\x1b[0m";
         console.log(`${colorGreen}[GeoTagStore [ADD] ]${colorReset} ${geotag}`)
+
+        return geotag.id;
+    }
+
+    updateGeoTag(newTag, id) {
+        let index = this.#getIndexById(id);
+        if (index === -1) return null;
+
+        this.#geotags[index] = newTag;
+        this.#geotags[index].id = id;
+
+        return this.#geotags[index];
     }
 
     /**
@@ -63,6 +86,41 @@ class InMemoryGeoTagStore{
         console.log(`${colorGreen}[GeoTagStore [REMOVE] ]${colorReset} ${remCount} * ${filter}`)
 
         return remCount;
+    }
+
+    removeGeoTagById(id) {
+        let index = this.#getIndexById(id);
+        if (index === -1) return null;
+
+        let out = this.#geotags[index];
+        this.#geotags.splice(index, 1);
+
+        return out;
+    }
+
+    /**
+     * @param {number} id
+     * @return {number} index
+     */
+    #getIndexById(id) {
+        if (this.#geotags.at(-1).id < id || id < this.#geotags.at(0).id)
+            return -1;
+        
+        return this.#geotags.findIndex((tag) =>
+            tag.id == id
+        )
+    }
+
+    /**
+     * @param {number} id
+     * @return {GeoTag | null}
+     */
+    getGeoTagById(id) {
+
+        let index = this.#getIndexById(id);
+        if (index === -1) return null;
+
+        return this.#geotags[index];
     }
 
     /**
