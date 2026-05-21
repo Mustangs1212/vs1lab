@@ -32,6 +32,12 @@ app.set('view engine', 'ejs');
 // Set logger
 app.use(logger('dev'));
 
+// allow CORS for all paths under /api
+app.use("/api", (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 // Set content processing
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
