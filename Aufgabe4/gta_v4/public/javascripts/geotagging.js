@@ -15,6 +15,7 @@ let tagLongitude;
 let disLatitude;  
 let disLongitude; 
 let disSearchterm;
+let disResults;
 
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     disLatitude   = document.getElementById("discov-form-lat");
     disLongitude  = document.getElementById("discov-form-lon");
     disSearchterm = document.getElementById("search-form-searchterm");
+    disResults    = document.getElementById("discoveryResults");
 
     updateLocation();
 
@@ -108,16 +110,15 @@ async function discoverTags(event) {
     let search = encodeURIComponent(disSearchterm.value);
     search = disSearchterm.value ? `&searchterm=${search}` : ``;
 
-    let res = fetch(
+    fetch(
         `http://127.0.0.1:3000/api/geotags`
         + `?latitude=${parseFloat(disLatitude.value)}`
         + `&longitude=${parseFloat(disLongitude.value)}`
         + search
-    )
-    .then(response => response.json())
-    .then(data => console.log('Erfolg:', data))
-    .catch(error => console.error('Fehler:', error));
-
-    console.log(res);
+    ).then(response => response.json())
+    .then(json => {
+        disResults.innerHTML = "";
+        json.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
+    });
 
 }
