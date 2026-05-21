@@ -126,44 +126,14 @@ class InMemoryGeoTagStore{
     /**
      * @param {number} latitude
      * @param {number} longitude
+     * @param {String} searchterm a name or hash of a geotag
      * @return {GeoTag[]}
      */
-    getNearbyGeoTags(latitude, longitude) {
+    searchGeoTags(latitude, longitude, searchterm) {
         return this.#geotags.filter((tag) =>
-            this.#geoTagFilter(latitude, longitude, null, tag)
-        )
-    }
-
-    /**
-     * @param {number} latitude
-     * @param {number} longitude
-     * @param {String} filter a name or hash of a geotag
-     * @return {GeoTag[]}
-     */
-    searchNearbyGeoTags(latitude, longitude, filter) {
-        if (!filter) return this.getNearbyGeoTags(latitude, longitude);
-
-        return this.#geotags.filter((tag) =>
-            this.#geoTagFilter(latitude, longitude, filter, tag)
+            this.#locationFilter(latitude, longitude, tag.latitude, tag.longitude) 
+            && this.#searchtermFilter(searchterm, tag.name, tag.hashtag)
         );
-    }
-
-    /**
-     * @param {number} latitude
-     * @param {number} longitude
-     * @param {String} filter a name or hash of a geotag
-     * @param {GeoTag} tag
-     * @return {GeoTag[]}
-     */
-    #geoTagFilter(latitude, longitude, filter, tag) {
-
-        if (filter != null && !(tag.name.includes(filter) || tag.hashtag.includes(filter)))
-            return false;
-
-        if (latitude != null && longitude != null && !this.#isNearby(latitude, longitude, tag.latitude, tag.longitude))
-            return false;
-
-        return true;
     }
 
     /**
@@ -173,8 +143,21 @@ class InMemoryGeoTagStore{
      * @param {number} lon2
      * @returns {boolean} true if points are nearby, false otherwise
      */
-    #isNearby(lat1, lon1, lat2, lon2) {
-        return this.#computeDistance(lat1, lon1, lat2, lon2) <= this.nearbyRadius;
+    #locationFilter(lat1, lon1, lat2, lon2) {
+        return this.#computeDistance(lat1, lon1, lat2, lon2) <= InMemoryGeoTagStore.nearbyRadius;
+    }
+
+    /**
+     * @param {string} searchterm
+     * @param {string} filterName
+     * @param {string} filterHash
+     * @returns {boolean}
+     */
+    #searchtermFilter(searchterm, filterName, filterHash) {
+        if (searchterm == "" || searchterm === undefined || searchterm == null)
+            return true;
+
+        return filterName.includes(searchterm) || filterHash.includes(searchterm);
     }
 
     /**

@@ -2,19 +2,44 @@
 
 /* eslint-disable no-unused-vars */
 
-// This script is executed when the browser loads index.html.
+"use strict";
 
-// "console.log" writes to the browser's console. 
-// The console window must be opened explicitly in the browser.
-// Try to find this output in the browser...
-console.log("The geoTagging script is going to start...");
+let tagForm;
+let disForm;
+
+let tagName
+let tagHash
+let tagLatitude;  
+let tagLongitude;
+
+let disLatitude;  
+let disLongitude; 
+let disSearchterm;
+
+// Wait for the page to fully load its DOM content, then call updateLocation
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("The geoTagging script is going to start...");
+
+    tagForm = document.getElementById("tag-form");
+    disForm = document.getElementById("discoveryFilterForm");
+
+    tagName = document.getElementById("tag-form-name");
+    tagHash = document.getElementById("tag-form-hash");
+    tagLatitude  = document.getElementById("tag-form-lat");
+    tagLongitude = document.getElementById("tag-form-lon");
+
+    disLatitude   = document.getElementById("discov-form-lat");
+    disLongitude  = document.getElementById("discov-form-lon");
+    disSearchterm = document.getElementById("search-form-searchterm");
+
+    updateLocation();
+
+    tagForm.addEventListener("submit", postGeoTag);
+    disForm.addEventListener("submit", discoverTags);
+
+});
 
 function updateLocation() {
-
-    const tagLatitude = document.getElementById("tag-form-lat");
-    const tagLongitude = document.getElementById("tag-form-lon");
-    const disLatitude = document.getElementById("discov-form-lat");
-    const disLongitude = document.getElementById("discov-form-lon");
 
     const tagLatVal = parseFloat(tagLatitude.value);
     const tagLonVal = parseFloat(tagLongitude.value);
@@ -58,7 +83,41 @@ function updateMap(lat, lon) {
     document.querySelector("#map span").remove();
 }
 
-// Wait for the page to fully load its DOM content, then call updateLocation
-document.addEventListener("DOMContentLoaded", () => {
-    updateLocation();
-});
+async function postGeoTag(event) {
+    event.preventDefault();
+
+    fetch("http://localhost:3000/api/geotags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: `{\
+            "latitude": ${parseFloat(tagLatitude.value)},\
+            "longitude": ${parseFloat(tagLongitude.value)},\
+            "name": "${tagName.value}",\
+            "hashtag": "${tagHash.value}"\
+        }`
+    })
+    .then(response => response.json())
+    .then(data => console.log('Erfolg:', data))
+    .catch(error => console.error('Fehler:', error));
+}
+
+async function discoverTags(event) {
+
+    event.preventDefault();
+
+    let search = encodeURIComponent(disSearchterm.value);
+    search = disSearchterm.value ? `&searchterm=${search}` : ``;
+
+    let res = fetch(
+        `http://127.0.0.1:3000/api/geotags`
+        + `?latitude=${parseFloat(disLatitude.value)}`
+        + `&longitude=${parseFloat(disLongitude.value)}`
+        + search
+    )
+    .then(response => response.json())
+    .then(data => console.log('Erfolg:', data))
+    .catch(error => console.error('Fehler:', error));
+
+    console.log(res);
+
+}

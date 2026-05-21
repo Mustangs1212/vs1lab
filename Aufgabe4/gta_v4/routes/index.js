@@ -57,11 +57,29 @@ router.get('/', (req, res) => {
  */
 
 router.get("/api/geotags", (req, res) => {
-  res.send(geoTagStore.searchNearbyGeoTags(
-    req.query.latitude,
-    req.query.longitude,
-    req.query.searchterm
-  ));
+
+  let lat;
+  let lon;
+  if ("latitude" in req.query && "longitude" in req.query) {
+
+    lat = parseFloat(req.query.latitude);
+    lon = parseFloat(req.query.longitude);
+
+    if (isNaN(lat) || isNaN(lon))
+      return res.sendStatus(400);
+
+  }
+
+  let search
+  if ("searchterm" in req.query) {
+
+    search = req.query.searchterm;
+
+    if (search.length > 11 && (search[0] === '#' || search.length > 10))
+      return res.sendStatus(400);
+  }
+
+  res.send(geoTagStore.searchGeoTags(lat, lon, search));
 });
 
 
@@ -167,7 +185,7 @@ router.put("/api/geotags/:id", (req, res) => {
 router.delete("/api/geotags/:id", (req, res) => {
   
   let tag = geoTagStore.removeGeoTagById(req.params.id);
-  if (tag=== null)
+  if (tag === null)
     return res.sendStatus(404);
 
   res.send(tag);
