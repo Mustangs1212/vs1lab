@@ -16,8 +16,10 @@ let disLatitude;
 let disLongitude; 
 let disSearchterm;
 let disResults;
+
 let discoveryNext;
 let discoveryPrev;
+let dixcoveryCurrentPage;
 
 let manager;
 
@@ -39,8 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     disLongitude  = document.getElementById("discov-form-lon");
     disSearchterm = document.getElementById("search-form-searchterm");
     disResults    = document.getElementById("discoveryResults");
+
     discoveryNext = document.getElementById("discoveryNext");
     discoveryPrev = document.getElementById("discoveryPrev");
+    dixcoveryCurrentPage = document.getElementById("currentPage");
 
     manager = new MapManager();
 
@@ -50,10 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
     disForm.addEventListener("submit", discoverTags);
 
     discoveryNext.addEventListener("click", nextPage);
-    discoveryPrev.addEventListener("click", nextPage);
+    discoveryPrev.addEventListener("click", prevPage);
+    dixcoveryCurrentPage.addEventListener("input", pageChange);
 
+    document.getElementById("tag-form-submit").disabled = false;
     document.getElementById("search-form-submit").disabled = false;
-    document.getElementById("tag-form-submit").disabled    = false;
 
 });
 
@@ -150,4 +155,8 @@ async function nextPage(event) {
 
 async function prevPage(event) {
     alert("Previus PAGE")
+}
+
+async function pageChange(event) {
+    alert("Page change");
 }

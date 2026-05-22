@@ -143,8 +143,25 @@ input {
   border: none;
 }
 
+#discoveryPageControlls input {
+  color: var(--link-color);
+
+  border-bottom: var(--link-color) solid .3em;
+}
+
 #discoveryPageControlls button {
   width: 9em;
+  color: var(--link-color);
+  border-bottom: var(--link-color) solid .3em;
+}
+
+#discoveryPageControlls button[disabled] {
+  color: var(--gray-color);
+  border-bottom: var(--gray-color) solid .3em;
+}
+
+#discoveryPageControlls button:not([disabled]):hover {
+  cursor: pointer;
 }
 
 #discoveryResults li {
