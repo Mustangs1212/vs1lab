@@ -19,6 +19,9 @@ let disResults;
 
 let manager;
 
+
+const PAGE_SIZE = 8;
+
 // Wait for the page to fully load its DOM content, then call updateLocation
 document.addEventListener("DOMContentLoaded", () => {
     console.log("The geoTagging script is going to start...");
@@ -120,16 +123,18 @@ async function discoverTags(event) {
     const lon = parseFloat(disLongitude.value);
 
     const tags = await fetch(
-        `http://127.0.0.1:3000/api/geotags`
-        + `?latitude=${lat}`
+        `http://127.0.0.1:3000/api/geotags/page`
+        + `?lastId=-1`
+        + `&pageSize=${PAGE_SIZE}`
+        + `&latitude=${lat}`
         + `&longitude=${lon}`
         + search
     ).then(response => response.json());
 
     // update list
     disResults.innerHTML = "";
-    tags.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
+    tags.data.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
 
     // update map
-    manager.updateMarkers(lat, lon, tags);
+    manager.updateMarkers(lat, lon, tags.data);
 }

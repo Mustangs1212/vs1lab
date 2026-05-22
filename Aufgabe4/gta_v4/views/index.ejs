@@ -83,7 +83,16 @@
                 <div class="discovery__wrapper row">
                     <div class="discovery__taglist col-5">
                         <ul class="discovery__results" id="discoveryResults">
+                            <!-- search elements will be loaded here -->
                         </ul>
+
+                        <div id="discoveryPageControlls" class="row">
+                            <button disabled> < Previous </button>
+                            <input type="number" value="1" min="1" max="">
+                            <span>of</span>
+                            <span>1</span>
+                            <button> Next > </button>
+                        </div>
                     </div>
 
                     <div id="map" class="discovery__map col-7" data-tags="<%= JSON.stringify(taglist) %>">

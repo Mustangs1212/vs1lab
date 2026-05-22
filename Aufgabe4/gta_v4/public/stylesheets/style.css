@@ -123,6 +123,30 @@ input {
 
 /* Styles for Discovery component */
 
+#discoveryPageControlls {
+  justify-content: center;
+
+  border-width: 2px;
+  border-style: groove;
+  border-color: threedface;
+
+  gap: 1em;
+  padding: 1em;
+}
+
+#discoveryPageControlls * {
+  padding: .5rem;
+  width: 4em;
+  margin: initial;
+
+  background-color: initial;
+  border: none;
+}
+
+#discoveryPageControlls button {
+  width: 9em;
+}
+
 #discoveryResults li {
   list-style-type: none;
   border: .1rem solid var(--border-color) ;
