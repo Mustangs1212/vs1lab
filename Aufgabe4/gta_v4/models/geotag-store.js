@@ -182,6 +182,9 @@ class InMemoryGeoTagStore{
      * @returns {boolean} true if points are nearby, false otherwise
      */
     #locationFilter(lat1, lon1, lat2, lon2) {
+        if(!lat1, !lon1) 
+            return true;
+
         return this.#computeDistance(lat1, lon1, lat2, lon2) <= InMemoryGeoTagStore.nearbyRadius;
     }
 

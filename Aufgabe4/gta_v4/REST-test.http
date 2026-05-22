@@ -65,4 +65,4 @@ DELETE  http://127.0.0.1:3000/api/geotags/1
 
 ###
 
-GET http://127.0.0.1:3000/api/geotags/page?lastId
+GET http://127.0.0.1:3000/api/geotags/page?lastId=5&pageSize=3&searchterm=Building
