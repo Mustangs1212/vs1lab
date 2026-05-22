@@ -142,19 +142,33 @@ class InMemoryGeoTagStore{
      * @param {String} searchterm a name or hash of a geotag
      * @param {number} lastId
      * @param {number} pageSize
-     * @return {GeoTag[]}
+     * @return {{
+     *      lastIdIsValid: boolean,
+     *      maybeMore: boolean,
+     *      data: GeoTag[],
+     * }}
      */
     searchGeoTagsPage(latitude, longitude, searchterm, lastId, pageSize) {
 
-        const lastIndex = this.#getIndexById(lastId);
+        let lastIdIsValid;
+        let maybeMore = false;
+
+        let lastIndex = this.#getIndexById(lastId);
         if (lastIndex === -1) {
-            return null;
+            lastIndex = this.#geotags.at(0).id;
+            lastIdIsValid = false;
+        } else {
+            lastIdIsValid = true;
         }
 
+        /**
+         * @type {GeoTag[]}
+         */
         let outArray = Array(pageSize);
         let pos = 0;
 
-        for (let i = lastIndex + 1; i < this.#geotags.length ; i++) {
+        let i = lastIndex + 1
+        for (; i < this.#geotags.length ; i++) {
 
             const tag = this.#geotags[i]
 
@@ -165,13 +179,20 @@ class InMemoryGeoTagStore{
                 outArray[pos] = tag;
                 pos++;
 
-                if (pos >= pageSize)
-                    return outArray;
+                if (pos >= pageSize) {
+                    maybeMore = true;
+                    break;
+                }
             }
         }
 
         outArray.length = pos;
-        return outArray;
+        return {
+            lastIdIsValid: lastIdIsValid,
+            maybeMore: maybeMore,
+            next: i,
+            data: outArray,
+        }
     }
 
     /**

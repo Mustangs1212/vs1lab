@@ -96,6 +96,20 @@ router.get("/api/geotags", (req, res) => {
 
 });
 
+/**
+ * Route '/api/geotags/page' for HTTP 'GET' requests.
+ * (http://expressjs.com/de/4x/api.html#app.get.method)
+ *
+ * Requests contain lastId, pageSize and the fields of the Discovery form as query.
+ * If 'searchterm' is present, it will be filtered by search term.
+ * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
+ * If lastId is present new elements are searcht from ther, if not or it is invalid it is searcht from the start
+ * pageSize is requiert
+ * (http://expressjs.com/de/4x/api.html#req.query)
+ *
+ * As a response, an array with Geo Tag objects is rendered as JSON.
+ */
+
 router.get("/api/geotags/page", (req, res) => {
 
   const lastId   = parseFloat(req.query.lastId);
@@ -107,8 +121,6 @@ router.get("/api/geotags/page", (req, res) => {
   const {lat, lon, search} = b(req, res);
 
   res.send(geoTagStore.searchGeoTagsPage(lat, lon, search, lastId, pageSize));
-
-
 })
 
 
