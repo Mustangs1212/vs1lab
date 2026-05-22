@@ -1,11 +1,16 @@
+http://127.0.0.1:3000/api/geotags?searchterm=%hello
 
 ### all tags
 
 http://127.0.0.1:3000/api/geotags
 
+###
+
+http://127.0.0.1:3000/api/geotags?latitude=&longitude=
+
 ### filter by name
 
-http://127.0.0.1:3000/api/geotags?searchterm=Building
+http://127.0.0.1:3000/api/geotags?searchterm=
 
 ### filter by location
 
@@ -34,8 +39,8 @@ content-type: application/json
 {
     "latitude": 49.01379,
     "longitude": 8.404435,
-    "name": "Castle",
-    "hashtag": "#moin"
+    "name": "moin",
+    "hashtag": "#hello"
 }
 
 ###
