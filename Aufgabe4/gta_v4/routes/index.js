@@ -115,7 +115,7 @@ router.get("/api/geotags/page", (req, res) => {
   const lastId   = parseFloat(req.query.lastId);
   const pageSize = parseFloat(req.query.pageSize);
 
-  if (isNaN(lastId) || isNaN(pageSize))
+  if (isNaN(pageSize))
     return res.sendStatus(400);
 
   const {lat, lon, search} = b(req, res);

@@ -16,9 +16,10 @@ let disLatitude;
 let disLongitude; 
 let disSearchterm;
 let disResults;
+let discoveryNext;
+let discoveryPrev;
 
 let manager;
-
 
 const PAGE_SIZE = 8;
 
@@ -38,6 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     disLongitude  = document.getElementById("discov-form-lon");
     disSearchterm = document.getElementById("search-form-searchterm");
     disResults    = document.getElementById("discoveryResults");
+    discoveryNext = document.getElementById("discoveryNext");
+    discoveryPrev = document.getElementById("discoveryPrev");
 
     manager = new MapManager();
 
@@ -45,6 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     tagForm.addEventListener("submit", postGeoTag);
     disForm.addEventListener("submit", discoverTags);
+
+    discoveryNext.addEventListener("click", nextPage);
+    discoveryPrev.addEventListener("click", nextPage);
 
     document.getElementById("search-form-submit").disabled = false;
     document.getElementById("tag-form-submit").disabled    = false;
@@ -124,8 +130,7 @@ async function discoverTags(event) {
 
     const tags = await fetch(
         `http://127.0.0.1:3000/api/geotags/page`
-        + `?lastId=-1`
-        + `&pageSize=${PAGE_SIZE}`
+        + `?pageSize=${PAGE_SIZE}`
         + `&latitude=${lat}`
         + `&longitude=${lon}`
         + search
@@ -137,4 +142,12 @@ async function discoverTags(event) {
 
     // update map
     manager.updateMarkers(lat, lon, tags.data);
+}
+
+async function nextPage(event) {
+    alert("NEXT PAGE")
+}
+
+async function prevPage(event) {
+    alert("Previus PAGE")
 }
