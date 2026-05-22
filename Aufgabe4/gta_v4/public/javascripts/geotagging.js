@@ -43,6 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tagForm.addEventListener("submit", postGeoTag);
     disForm.addEventListener("submit", discoverTags);
 
+    document.getElementById("search-form-submit").disabled = false;
+    document.getElementById("tag-form-submit").disabled    = false;
+
 });
 
 function updateLocation() {
@@ -129,5 +132,4 @@ async function discoverTags(event) {
 
     // update map
     manager.updateMarkers(lat, lon, tags);
-
 }
