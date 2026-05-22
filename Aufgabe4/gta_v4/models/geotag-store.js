@@ -137,6 +137,44 @@ class InMemoryGeoTagStore{
     }
 
     /**
+     * @param {number} latitude
+     * @param {number} longitude
+     * @param {String} searchterm a name or hash of a geotag
+     * @param {number} lastId
+     * @param {number} pageSize
+     * @return {GeoTag[]}
+     */
+    searchGeoTagsPage(latitude, longitude, searchterm, lastId, pageSize) {
+
+        const lastIndex = this.#getIndexById(lastId);
+        if (lastIndex === -1) {
+            return null;
+        }
+
+        let outArray = Array(pageSize);
+        let pos = 0;
+
+        for (let i = lastIndex + 1; i < this.#geotags.length ; i++) {
+
+            const tag = this.#geotags[i]
+
+            if(
+                this.#locationFilter(latitude, longitude, tag.latitude, tag.longitude) 
+                && this.#searchtermFilter(searchterm, tag.name, tag.hashtag)
+            ) {
+                outArray[pos] = tag;
+                pos++;
+
+                if (pos >= pageSize)
+                    return outArray;
+            }
+        }
+
+        outArray.length = pos;
+        return outArray;
+    }
+
+    /**
      * @param {number} lat1
      * @param {number} lon1
      * @param {number} lat2

@@ -44,20 +44,10 @@ router.get('/', (req, res) => {
   res.render('index', { lat: "", lon: "", taglist: [] })
 });
 
-/**
- * Route '/api/geotags' for HTTP 'GET' requests.
- * (http://expressjs.com/de/4x/api.html#app.get.method)
- *
- * Requests contain the fields of the Discovery form as query.
- * (http://expressjs.com/de/4x/api.html#req.query)
- *
- * As a response, an array with Geo Tag objects is rendered as JSON.
- * If 'searchterm' is present, it will be filtered by search term.
- * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
- */
-
-router.get("/api/geotags", (req, res) => {
-
+/*
+!!! TODO move somver else
+*/
+function b(req, res) {
   let lat;
   let lon;
   if ("latitude" in req.query && "longitude" in req.query) {
@@ -79,8 +69,47 @@ router.get("/api/geotags", (req, res) => {
       return res.sendStatus(400);
   }
 
+  return {
+    lat: lat,
+    lon: lon,
+    search: search
+  };
+}
+
+/**
+ * Route '/api/geotags' for HTTP 'GET' requests.
+ * (http://expressjs.com/de/4x/api.html#app.get.method)
+ *
+ * Requests contain the fields of the Discovery form as query.
+ * (http://expressjs.com/de/4x/api.html#req.query)
+ *
+ * As a response, an array with Geo Tag objects is rendered as JSON.
+ * If 'searchterm' is present, it will be filtered by search term.
+ * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
+ */
+
+router.get("/api/geotags", (req, res) => {
+
+  const {lat, lon, search} = b(req, res);
+
   res.send(geoTagStore.searchGeoTags(lat, lon, search));
+
 });
+
+router.get("/api/geotags/page", (req, res) => {
+
+  const lastId   = parseFloat(req.query.lastId);
+  const pageSize = parseFloat(req.query.pageSize);
+
+  if (isNaN(lastId) || isNaN(pageSize))
+    return res.sendStatus(400);
+
+  const {lat, lon, search} = b(req, res);
+
+  res.send(geoTagStore.searchGeoTagsPage(lat, lon, search, lastId, pageSize));
+
+
+})
 
 
 /**
