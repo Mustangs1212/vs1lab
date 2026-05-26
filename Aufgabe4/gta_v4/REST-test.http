@@ -1,27 +1,36 @@
-http://127.0.0.1:3000/api/geotags?searchterm=%hello
+##### /api/geotags
 
-### all tags
+### list all
+GET http://127.0.0.1:3000/api/geotags
 
-http://127.0.0.1:3000/api/geotags
+### search with searchterm
+GET http://127.0.0.1:3000/api/geotags?searchterm=%23edu
 
-###
+### searcg with position
+GET http://127.0.0.1:3000/api/geotags?latitude=49.01379&longitude=8.404435
 
-http://127.0.0.1:3000/api/geotags?latitude=&longitude=
+### search with position AND searcter
+GET http://127.0.0.1:3000/api/geotags?latitude=49.01379&longitude=8.404435&searchterm=Buil
 
-### filter by name
+### lat wrong
+GET http://127.0.0.1:3000/api/geotags?latitude=MOIN&longitude=8.404435
 
-http://127.0.0.1:3000/api/geotags?searchterm=
+### lon wrong
+GET http://127.0.0.1:3000/api/geotags?latitude=6&longitude=bye
 
-### filter by location
+### lon missing
+GET http://127.0.0.1:3000/api/geotags?latitude=6
 
-http://127.0.0.1:3000/api/geotags?latitude=49.014993&longitude=8.390049
+### searchterm wrong
+GET http://127.0.0.1:3000/api/geotags?searchterm=%23edu55555554
 
-### filter by location (with no tags nearby)
+##### /api/geotags/page
 
-http://127.0.0.1:3000/api/geotags?latitude=0&longitude=0
+GET http://127.0.0.1:3000/api/geotags/page?lastId=3&pageSize=3&searchterm=Building
 
-### filter by location (with no tags nearby)
+##### POST /api/geotags
 
+### bad
 POST http://127.0.0.1:3000/api/geotags
 content-type: application/json
 
@@ -31,8 +40,7 @@ content-type: application/json
     "longitude": 8.404435
 }
 
-###
-
+### ok
 POST http://127.0.0.1:3000/api/geotags
 content-type: application/json
 
@@ -43,26 +51,36 @@ content-type: application/json
     "hashtag": "#hello"
 }
 
-###
+##### GET /api/geotags/:id
 
-http://127.0.0.1:3000/api/geotags/-1
+### ok
+GET http://127.0.0.1:3000/api/geotags/5
 
-###
+### :(
+GET http://127.0.0.1:3000/api/geotags/-1
 
-PUT http://127.0.0.1:3000/api/geotags/1
+##### PUT /api/geotags/:id
+
+### ok
+PUT http://127.0.0.1:3000/api/geotags/5
 content-type: application/json
 
 {
     "latitude": 49.01379,
     "longitude": 8.404435,
-    "name": "Castle",
-    "hashtag": "moin"
+    "name": "moin",
+    "hashtag": "#hello"
 }
 
-###
+### Bad
+PUT http://127.0.0.1:3000/api/geotags/5
+content-type: application/json
 
-DELETE  http://127.0.0.1:3000/api/geotags/1
+{
+    "name": "49.01379",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT",
+    "longitude": 8.404435
+}
 
-###
-
-GET http://127.0.0.1:3000/api/geotags/page?lastId=5&pageSize=3&searchterm=Building
+##### DELETE /api/geotags/:id
+DELETE http://127.0.0.1:3000/api/geotags/5

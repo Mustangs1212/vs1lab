@@ -31,6 +31,38 @@ GeoTagExamples.forEach((example) =>
     geoTagStore.addGeoTag(new GeoTag( example[1], example[2], example[0], example[3] ))
 )
 
+function validateQuery(req, res) {
+  let lat;
+  let lon;
+  if ("latitude" in req.query && "longitude" in req.query) {
+
+    lat = parseFloat(req.query.latitude);
+    lon = parseFloat(req.query.longitude);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      return res.status(400).send("latitide or longitude are not numbers");
+    }
+
+  }
+
+  let search
+  if ("searchterm" in req.query) {
+
+    search = req.query.searchterm;
+
+    if (search.length > (search.startsWith('#') ? 11 : 10)) {
+      return res.status(400).send("searchterm is wrongly formatted");
+    }
+
+  }
+
+  return {
+    lat: lat,
+    lon: lon,
+    search: search
+  };
+}
+
 /**
  * Route '/' for HTTP 'GET' requests.
  * (http://expressjs.com/de/4x/api.html#app.get.method)
@@ -43,38 +75,6 @@ GeoTagExamples.forEach((example) =>
 router.get('/', (req, res) => {
   res.render('index', { lat: "", lon: "", taglist: [] })
 });
-
-/*
-!!! TODO move somver else
-*/
-function b(req, res) {
-  let lat;
-  let lon;
-  if ("latitude" in req.query && "longitude" in req.query) {
-
-    lat = parseFloat(req.query.latitude);
-    lon = parseFloat(req.query.longitude);
-
-    if (isNaN(lat) || isNaN(lon))
-      return res.sendStatus(400);
-
-  }
-
-  let search
-  if ("searchterm" in req.query) {
-
-    search = req.query.searchterm;
-
-    if (search.length > 11 && (search[0] === '#' || search.length > 10))
-      return res.sendStatus(400);
-  }
-
-  return {
-    lat: lat,
-    lon: lon,
-    search: search
-  };
-}
 
 /**
  * Route '/api/geotags' for HTTP 'GET' requests.
@@ -90,7 +90,7 @@ function b(req, res) {
 
 router.get("/api/geotags", (req, res) => {
 
-  const {lat, lon, search} = b(req, res);
+  const {lat, lon, search} = validateQuery(req, res);
 
   res.send(geoTagStore.searchGeoTags(lat, lon, search));
 
@@ -115,11 +115,17 @@ router.get("/api/geotags/page", (req, res) => {
   const lastId   = parseFloat(req.query.lastId);
   const pageSize = parseFloat(req.query.pageSize);
 
-  if (isNaN(pageSize))
-    return res.sendStatus(400);
+  let error = null;
 
-  const {lat, lon, search} = b(req, res);
+  if (isNaN(pageSize)) error = "pageSize";
+  if (isNaN(lastId)) error = "lastId";
 
+  if (error) {
+    return res.status(400).send(`${error} is not a number or is not pressend`);
+  }
+
+  const {lat, lon, search} = validateQuery(req, res);
+                       
   res.send(geoTagStore.searchGeoTagsPage(lat, lon, search, lastId, pageSize));
 })
 
@@ -140,7 +146,7 @@ router.post("/api/geotags", (req, res) => {
   const json = req.body;
 
   if (!GeoTag.isValidGeoTag(json))
-    return res.sendStatus(400);
+    return res.status(400).send("geotag in body is not a valid geotag");
 
   let tag = new GeoTag(
     json.latitude,
@@ -195,7 +201,7 @@ router.put("/api/geotags/:id", (req, res) => {
   const json = req.body;
 
   if (!GeoTag.isValidGeoTag(json))
-    return res.sendStatus(400);
+    return res.status(400).send("geotag in body is not a valid geotag");
 
   let tag = new GeoTag(
     json.latitude,
@@ -203,14 +209,13 @@ router.put("/api/geotags/:id", (req, res) => {
     json.name,
     json.hashtag
   );
-  
-  let tagUpdated = geoTagStore.updateGeoTag(tag, req.params.id);
+
+  const tagUpdated = geoTagStore.updateGeoTag(tag, req.params.id);
   if (tagUpdated === null)
-    return res.sendStatus(404);
+    return res.status(400).send("invalid id");
 
   res.send(tagUpdated);
 });
-
 
 /**
  * Route '/api/geotags/:id' for HTTP 'DELETE' requests.

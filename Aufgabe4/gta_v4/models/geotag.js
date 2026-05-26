@@ -55,7 +55,7 @@ class GeoTag {
             typeof obj.latitude  === "number" &&
             typeof obj.longitude === "number" &&
             (typeof obj.name     === "string" && obj.name.length <= 10) &&
-            ((typeof obj.hashtag === "string" && obj.hashtag.length <= 11 && (obj.hashtag[0] == '#' || obj.hashtag.length === 0)) || typeof obj.hashtag   === "undefined")
+            (typeof obj.hashtag  === "string" && obj.hashtag.length <= 11 && obj.hashtag[0] == '#')
         )
     }
 

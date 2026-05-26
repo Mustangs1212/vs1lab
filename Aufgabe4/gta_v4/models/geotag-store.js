@@ -31,12 +31,12 @@ class InMemoryGeoTagStore{
      * radius to check if a point is nearby in km
      * @Type {number}
      */
-    static nearbyRadius = 5;
+    nearbyRadius = 5;
 
     /**
      * @Type {number}
      */
-    static #nextId = 0;
+    #nextId = 0;
 
     /**
      * add a geotag to the store
@@ -45,8 +45,8 @@ class InMemoryGeoTagStore{
      */
     addGeoTag(geotag) {
 
-        geotag.id = InMemoryGeoTagStore.#nextId;
-        InMemoryGeoTagStore.#nextId++;
+        geotag.id = this.#nextId;
+        this.#nextId++;
 
         this.#geotags.push(geotag);
 
@@ -130,10 +130,7 @@ class InMemoryGeoTagStore{
      * @return {GeoTag[]}
      */
     searchGeoTags(latitude, longitude, searchterm) {
-        return this.#geotags.filter((tag) =>
-            this.#locationFilter(latitude, longitude, tag.latitude, tag.longitude) 
-            && this.#searchtermFilter(searchterm, tag.name, tag.hashtag)
-        );
+        return this.#geotags.filter((tag) => this.#geotagFilter(latitude, longitude, searchterm, tag));
     }
 
     /**
@@ -149,77 +146,74 @@ class InMemoryGeoTagStore{
      * }}
      */
     searchGeoTagsPage(latitude, longitude, searchterm, lastId, pageSize) {
+        
+        let page = new Array();
+        let pageIndex = 0;
+        let filteredIndex = 0;
 
-        let lastIdIsValid;
-        let maybeMore = false;
+        let firstIndex;
+        let lastIndex;
 
-        let lastIndex = this.#getIndexById(lastId);
-        if (lastIndex === -1) {
-            lastIndex = this.#geotags.at(0).id;
-            lastIdIsValid = false;
-        } else {
-            lastIdIsValid = true;
-        }
+        const filtered = this.#geotags.filter((tag) => {
+            const ok = this.#geotagFilter(latitude, longitude, searchterm, tag);
 
-        /**
-         * @type {GeoTag[]}
-         */
-        let outArray = Array(pageSize);
-        let pos = 0;
+            if (ok) {
+                if (tag.id >= lastId) {
 
-        let i = lastIndex + 1
-        for (; i < this.#geotags.length ; i++) {
+                    if (page.length < pageSize) {
+                        page.push(tag);
+                    }
 
-            const tag = this.#geotags[i]
+                    if (firstIndex === undefined) {
+                        firstIndex = filteredIndex;
+                    } else if (pageIndex === pageSize) {
+                        lastIndex = filteredIndex;
+                    }
 
-            if(
-                this.#locationFilter(latitude, longitude, tag.latitude, tag.longitude) 
-                && this.#searchtermFilter(searchterm, tag.name, tag.hashtag)
-            ) {
-                outArray[pos] = tag;
-                pos++;
-
-                if (pos >= pageSize) {
-                    maybeMore = true;
-                    break;
+                    pageIndex++;
                 }
+
+                filteredIndex++;
             }
-        }
 
-        outArray.length = pos;
+            return ok;
+        });
+
+        if (lastIndex === undefined) lastIndex = filteredIndex;
+        const pageCount = Math.ceil( filtered.length / pageSize );
+
         return {
-            lastIdIsValid: lastIdIsValid,
-            maybeMore: maybeMore,
-            next: i,
-            data: outArray,
-        }
+            meta: {
+                pageCount: pageCount,
+                totalItems: filtered.length,
+                prevId: firstIndex - pageSize < 0 ? undefined : filtered.at(firstIndex - pageSize)?.id,
+                nextId: filtered.at(lastIndex)?.id,
+
+                pageNumber:  Math.floor((firstIndex + 1) / pageSize),
+                itemsInPage: page.length,
+            },
+            data: page,
+        };
     }
 
     /**
-     * @param {number} lat1
-     * @param {number} lon1
-     * @param {number} lat2
-     * @param {number} lon2
-     * @returns {boolean} true if points are nearby, false otherwise
-     */
-    #locationFilter(lat1, lon1, lat2, lon2) {
-        if(!lat1, !lon1) 
-            return true;
-
-        return this.#computeDistance(lat1, lon1, lat2, lon2) <= InMemoryGeoTagStore.nearbyRadius;
-    }
-
-    /**
-     * @param {string} searchterm
-     * @param {string} filterName
-     * @param {string} filterHash
+     * @param {string} searchterm search param
+     * @param {number} latitude search param
+     * @param {number} longitude search param
+     * @param {GeoTag} tag tag to filter
      * @returns {boolean}
      */
-    #searchtermFilter(searchterm, filterName, filterHash) {
-        if (searchterm == "" || searchterm === undefined || searchterm == null)
-            return true;
+    #geotagFilter(latitude, longitude, searchterm, tag) {
 
-        return filterName.includes(searchterm) || filterHash.includes(searchterm);
+        const locationOk = (!latitude || !longitude)
+            ? true 
+            : this.#computeDistance(latitude, longitude, tag.latitude, tag.longitude) <= this.nearbyRadius;
+
+        const nameOk = (searchterm == "" || searchterm === undefined || searchterm == null)
+            ? true
+            : tag.name.includes(searchterm) || tag.hashtag.includes(searchterm);
+
+        return locationOk && nameOk;
     }
 
     /**
