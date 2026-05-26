@@ -211,7 +211,7 @@ class InMemoryGeoTagStore{
 
         const nameOk = (searchterm == "" || searchterm === undefined || searchterm == null)
             ? true
-            : tag.name.includes(searchterm) || tag.hashtag.includes(searchterm);
+            : tag.name.includes(searchterm) || tag.hashtag?.includes(searchterm);
 
         return locationOk && nameOk;
     }

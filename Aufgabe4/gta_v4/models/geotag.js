@@ -44,7 +44,7 @@ class GeoTag {
         this.latitude = latitude;
         this.longitude = longitude;
         this.name = name;
-        this.hashtag = hash;
+        hash ? this.hashtag = hash : this.hashtag = "";
     }
 
     static isValidGeoTag(obj) {
@@ -55,7 +55,7 @@ class GeoTag {
             typeof obj.latitude  === "number" &&
             typeof obj.longitude === "number" &&
             (typeof obj.name     === "string" && obj.name.length <= 10) &&
-            (typeof obj.hashtag  === "string" && obj.hashtag.length <= 11 && obj.hashtag[0] == '#')
+            (obj.hashtag === undefined || (typeof obj.hashtag  === "string" && obj.hashtag.length <= 11 && obj.hashtag[0] == '#'))
         )
     }
 

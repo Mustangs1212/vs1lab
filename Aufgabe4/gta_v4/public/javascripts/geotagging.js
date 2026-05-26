@@ -20,6 +20,9 @@ let disResults;
 let discoveryNext;
 let discoveryPrev;
 let dixcoveryCurrentPage;
+let maxPage;
+let nextId;
+let prevId;
 
 let manager;
 
@@ -45,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     discoveryNext = document.getElementById("discoveryNext");
     discoveryPrev = document.getElementById("discoveryPrev");
     dixcoveryCurrentPage = document.getElementById("currentPage");
+    maxPage = document.getElementById("maxPage");
 
     manager = new MapManager();
 
@@ -55,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     discoveryNext.addEventListener("click", nextPage);
     discoveryPrev.addEventListener("click", prevPage);
-    dixcoveryCurrentPage.addEventListener("input", pageChange);
 
     document.getElementById("tag-form-submit").disabled = false;
     document.getElementById("search-form-submit").disabled = false;
@@ -106,25 +109,21 @@ function initMap(lat, lon) {
     manager.updateMarkers(lat, lon, taglist);
 }
 
-async function postGeoTag(event) {
-    event.preventDefault();
+function updatePageControlls(meta) {
+    
+    console.log("" + meta.prevId + meta.nextId);
 
-    fetch("http://localhost:3000/api/geotags", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: `{\
-            "latitude": ${parseFloat(tagLatitude.value)},\
-            "longitude": ${parseFloat(tagLongitude.value)},\
-            "name": "${tagName.value}",\
-            "hashtag": "${tagHash.value}"\
-        }`
-    })
-    .then(response => response.json())
-    .then(data => console.log('Erfolg:', data))
-    .catch(error => console.error('Fehler:', error));
+    discoveryPrev.disabled = meta.prevId === undefined ? true : false;
+    discoveryNext.disabled = meta.nextId === undefined ? true : false;
+
+    nextId = meta.nextId;
+    prevId = meta.prevId;
+
+    dixcoveryCurrentPage.innerText = meta.pageNumber + 1;
+    maxPage.innerText = meta.pageCount;
 }
 
-async function discoverTags(event) {
+async function f(id) {
     event.preventDefault();
 
     let search = encodeURIComponent(disSearchterm.value);
@@ -133,30 +132,60 @@ async function discoverTags(event) {
     const lat = parseFloat(disLatitude.value)
     const lon = parseFloat(disLongitude.value);
 
-    const tags = await fetch(
+    const res = await fetch(
         `http://127.0.0.1:3000/api/geotags/page`
         + `?pageSize=${PAGE_SIZE}`
+        + `&lastId=${id}`
         + `&latitude=${lat}`
         + `&longitude=${lon}`
         + search
     ).then(response => response.json());
+    const tags = res.data;
+    const meta = res.meta;
+
+    // update page contolls
+    updatePageControlls(meta);
 
     // update list
     disResults.innerHTML = "";
-    tags.data.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
+    tags.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
 
     // update map
-    manager.updateMarkers(lat, lon, tags.data);
+    manager.updateMarkers(lat, lon, res.data);
+}
+
+async function postGeoTag(event) {
+    event.preventDefault();
+
+    console.log(tagHash.value);
+
+    fetch("http://localhost:3000/api/geotags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: `{\
+            "latitude": ${parseFloat(tagLatitude.value)},\
+            "longitude": ${parseFloat(tagLongitude.value)},\
+            "name": "${tagName.value}"\
+            ${(tagHash.value === "" ? "" : `,"hashtag": "${tagHash.value}"` )}\
+        }`
+    })
+    .then(response => response.json())
+
+    tagHash.value = "";
+    tagName.value= "";
+}
+
+async function discoverTags(event) {
+    event.preventDefault();
+    f(0);
 }
 
 async function nextPage(event) {
-    alert("NEXT PAGE")
+    event.preventDefault();
+    f(nextId);
 }
 
 async function prevPage(event) {
-    alert("Previus PAGE")
-}
-
-async function pageChange(event) {
-    alert("Page change");
+    event.preventDefault();
+    f(prevId);
 }
