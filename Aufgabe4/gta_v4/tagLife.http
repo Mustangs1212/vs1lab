@@ -1,0 +1,42 @@
+### Erstellen
+POST http://127.0.0.1:3000/api/geotags
+content-type: application/json
+
+{
+    "latitude": 19.569603,
+    "longitude": -165.654487,
+    "name": "Pacific",
+    "hashtag": "#coolPlace"
+}
+
+
+### Auslesen [1/2]
+GET http://127.0.0.1:3000/api/geotags
+
+### Auslesen [2/2]
+GET http://127.0.0.1:3000/api/geotags/24
+
+
+### Ändern
+PUT http://127.0.0.1:3000/api/geotags/24
+content-type: application/json
+
+{
+    "latitude": 19.569603,
+    "longitude": -165.654487,
+    "name": "Pacific",
+    "hashtag": "#inWater"
+}
+
+
+### Suchen [1/3]
+GET http://127.0.0.1:3000/api/geotags?searchterm=cif
+
+### Suchen [2/3]
+GET http://127.0.0.1:3000/api/geotags?latitude=19.57&longitude=-165.6545
+
+### Suchen [3/3]
+GET http://127.0.0.1:3000/api/geotags?latitude=19.57&longitude=-165.6545?searchterm=ater
+
+### Löschen
+DELETE http://127.0.0.1:3000/api/geotags/24
