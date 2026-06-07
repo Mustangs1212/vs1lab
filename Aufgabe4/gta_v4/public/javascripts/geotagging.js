@@ -110,7 +110,7 @@ function executeDiscovery() {
     .then(taglist => {
         console.log("Empfangene GeoTags vom Server:", taglist);
 
-        // 1. Liste links aktualisieren
+        // Liste links aktualisieren
         const resultsList = document.getElementById("discoveryResults");
         if (resultsList) {
             resultsList.innerHTML = ""; 
@@ -121,14 +121,13 @@ function executeDiscovery() {
             });
         }
 
-        // --- AB HIER: AUTOMATISCHE PERSPEKTIVE ANPASSEN ---
         // Falls wir Suchergebnisse haben, passen wir das Zentrum der Karte an
         if (taglist.length > 0) {
             lat = taglist[0].latitude;
             lon = taglist[0].longitude;
         }
 
-        // 2. Karte und Pins aktualisieren
+        // Karte und Pins aktualisieren
         const mapContainer = L.DomUtil.get('map');
         if (mapContainer != null) {
             mapContainer._leaflet_id = null; 
@@ -145,7 +144,7 @@ function executeDiscovery() {
 document.addEventListener("DOMContentLoaded", () => {
     updateLocation();
 
-    // 1. Formular für "Tagging" abfangen
+    // Formular für "Tagging" abfangen
     const tagForm = document.getElementById("tag-form"); 
     if (tagForm) {
         tagForm.addEventListener("submit", (event) => {
@@ -154,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 2. Formular für "Discovery" abfangen
+    // Formular für "Discovery" abfangen
     const discovForm = document.getElementById("discoveryFilterForm"); // KORRIGIERT: ID aus HTML
     if (discovForm) {
         discovForm.addEventListener("submit", (event) => {
