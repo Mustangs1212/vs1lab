@@ -1,4 +1,4 @@
-// File origin: VS1LAB A3, A4
+// File origin: VS1LAB A3
 
 /**
  * This script defines the main router of the GeoTag server.
@@ -13,21 +13,24 @@
 const express = require('express');
 const router = express.Router();
 
-/**
- * The module "geotag" exports a class GeoTagStore. 
- * It represents geotags.
- */
-// eslint-disable-next-line no-unused-vars
 const GeoTag = require('../models/geotag');
+const GeoTagStore = require('../models/geotag-store');
+const GeoTagExamples = require("../models/geotag-examples").tagList;
+
 
 /**
- * The module "geotag-store" exports a class GeoTagStore. 
- * It provides an in-memory store for geotag objects.
+ * The GeoTagStore to use
+ * @type {InMemoryGeoTagStore}
  */
-// eslint-disable-next-line no-unused-vars
-const GeoTagStore = require('../models/geotag-store');
+const geoTagStore= new GeoTagStore();
 
-// App routes (A3)
+
+/**
+ *  files the store with the example Data from GeoTagExamples
+ */
+GeoTagExamples.forEach((example) =>
+    geoTagStore.addGeoTag(new GeoTag( example[1], example[2], example[0], example[3] ))
+)
 
 /**
  * Route '/' for HTTP 'GET' requests.
@@ -39,81 +42,73 @@ const GeoTagStore = require('../models/geotag-store');
  */
 
 router.get('/', (req, res) => {
-  res.render('index', { taglist: [] })
+  res.render('index', { lat: "", lon: "", taglist: [] })
 });
 
-// API routes (A4)
-
 /**
- * Route '/api/geotags' for HTTP 'GET' requests.
- * (http://expressjs.com/de/4x/api.html#app.get.method)
- *
- * Requests contain the fields of the Discovery form as query.
- * (http://expressjs.com/de/4x/api.html#req.query)
- *
- * As a response, an array with Geo Tag objects is rendered as JSON.
- * If 'searchterm' is present, it will be filtered by search term.
- * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
- */
-
-// TODO: ... your code here ...
-
-
-/**
- * Route '/api/geotags' for HTTP 'POST' requests.
+ * Route '/tagging' for HTTP 'POST' requests.
  * (http://expressjs.com/de/4x/api.html#app.post.method)
  *
- * Requests contain a GeoTag as JSON in the body.
+ * Requests cary the fields of the tagging form in the body.
  * (http://expressjs.com/de/4x/api.html#req.body)
  *
- * The URL of the new resource is returned in the header as a response.
- * The new resource is rendered as JSON in the response.
+ * Based on the form data, a new geotag is created and stored.
+ *
+ * As response, the ejs-template is rendered with geotag objects.
+ * All result objects are located in the proximity of the new geotag.
+ * To this end, "GeoTagStore" provides a method to search geotags 
+ * by radius around a given location.
  */
 
-// TODO: ... your code here ...
+router.post("/tagging", (req, res) => {
 
+  const body = req.body;
+
+  let lat = parseFloat(body.latitude);
+  let lon = parseFloat(body.longitude);
+  let name = body.name;
+  let hash = body.hashtag?.charAt(0) === '#' ? body.hashtag : "";
+
+  if (isNaN(lat) || isNaN(lon) || !name) {
+    res.render('index', { lat: "", lon: "", taglist: [] })
+    return;
+  }
+
+  geoTagStore.addGeoTag(new GeoTag(lat, lon, name, hash));
+
+  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.getNearbyGeoTags(lat, lon) })
+})
 
 /**
- * Route '/api/geotags/:id' for HTTP 'GET' requests.
- * (http://expressjs.com/de/4x/api.html#app.get.method)
+ * Route '/discovery' for HTTP 'POST' requests.
+ * (http://expressjs.com/de/4x/api.html#app.post.method)
  *
- * Requests contain the ID of a tag in the path.
- * (http://expressjs.com/de/4x/api.html#req.params)
+ * Requests cary the fields of the discovery form in the body.
+ * This includes coordinates and an optional search term.
+ * (http://expressjs.com/de/4x/api.html#req.body)
  *
- * The requested tag is rendered as JSON in the response.
+ * As response, the ejs-template is rendered with geotag objects.
+ * All result objects are located in the proximity of the given coordinates.
+ * If a search term is given, the results are further filtered to contain 
+ * the term as a part of their names or hashtags. 
+ * To this end, "GeoTagStore" provides methods to search geotags 
+ * by radius and keyword.
  */
 
-// TODO: ... your code here ...
+router.post("/discovery", (req, res) => {
 
+  const body = req.body;
 
-/**
- * Route '/api/geotags/:id' for HTTP 'PUT' requests.
- * (http://expressjs.com/de/4x/api.html#app.put.method)
- *
- * Requests contain the ID of a tag in the path.
- * (http://expressjs.com/de/4x/api.html#req.params)
- * 
- * Requests contain a GeoTag as JSON in the body.
- * (http://expressjs.com/de/4x/api.html#req.query)
- *
- * Changes the tag with the corresponding ID to the sent value.
- * The updated resource is rendered as JSON in the response. 
- */
+  let lat = parseFloat(body.latitude);
+  let lon = parseFloat(body.longitude);
+  let searchterm = body.searchterm;
 
-// TODO: ... your code here ...
+  if (isNaN(lat) || isNaN(lon)) {
+    res.render('index', { lat: "", lon: "", taglist: [] })
+    return
+  }
 
-
-/**
- * Route '/api/geotags/:id' for HTTP 'DELETE' requests.
- * (http://expressjs.com/de/4x/api.html#app.delete.method)
- *
- * Requests contain the ID of a tag in the path.
- * (http://expressjs.com/de/4x/api.html#req.params)
- *
- * Deletes the tag with the corresponding ID.
- * The deleted resource is rendered as JSON in the response.
- */
-
-// TODO: ... your code here ...
+  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.searchNearbyGeoTags(lat, lon, searchterm) })
+})
 
 module.exports = router;
