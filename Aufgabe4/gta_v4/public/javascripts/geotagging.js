@@ -86,8 +86,8 @@ function executeTagging() {
 }
 
 function executeDiscovery() {
-    const lat = parseFloat(document.getElementById("discov-form-lat").value);
-    const lon = parseFloat(document.getElementById("discov-form-lon").value);
+    let lat = parseFloat(document.getElementById("discov-form-lat").value);
+    let lon = parseFloat(document.getElementById("discov-form-lon").value);
     const searchterm = document.getElementById("search-form-searchterm").value; 
 
     if (isNaN(lat) || isNaN(lon)) {
@@ -110,12 +110,10 @@ function executeDiscovery() {
     .then(taglist => {
         console.log("Empfangene GeoTags vom Server:", taglist);
 
-        // 1. SCHRITT: DIE LISTE LINKS NEBEN DER KARTE AKTUALISIEREN
+        // 1. Liste links aktualisieren
         const resultsList = document.getElementById("discoveryResults");
         if (resultsList) {
-            resultsList.innerHTML = ""; // Löscht die alten Einträge aus der HTML-Liste
-
-            // Befülle die Liste mit den neuen, gefilterten Daten
+            resultsList.innerHTML = ""; 
             taglist.forEach(gtag => {
                 const li = document.createElement("li");
                 li.textContent = `${gtag.name} ( ${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag || ''}`;
@@ -123,15 +121,21 @@ function executeDiscovery() {
             });
         }
 
-        // 2. SCHRITT: DIE KARTE UND PINS AKTUALISIEREN
-        // Bereite das HTML-Karten-Element vor, damit Leaflet nicht blockiert
+        // --- AB HIER: AUTOMATISCHE PERSPEKTIVE ANPASSEN ---
+        // Falls wir Suchergebnisse haben, passen wir das Zentrum der Karte an
+        if (taglist.length > 0) {
+            lat = taglist[0].latitude;
+            lon = taglist[0].longitude;
+        }
+
+        // 2. Karte und Pins aktualisieren
         const mapContainer = L.DomUtil.get('map');
         if (mapContainer != null) {
             mapContainer._leaflet_id = null; 
         }
 
         let manager = new MapManager();
-        manager.initMap(lat, lon);
+        manager.initMap(lat, lon); // Initialisiert die Karte direkt zentriert auf den neuen Punkt!
         manager.updateMarkers(lat, lon, taglist);
     })
     .catch(error => console.error("Fehler bei der Suche:", error));
