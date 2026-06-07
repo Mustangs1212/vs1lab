@@ -22,14 +22,14 @@ const GeoTagExamples = require("../models/geotag-examples").tagList;
  * The GeoTagStore to use
  * @type {InMemoryGeoTagStore}
  */
-const geoTagStore= new GeoTagStore();
+const geoTagStore = new GeoTagStore();
 
 
 /**
  *  files the store with the example Data from GeoTagExamples
  */
 GeoTagExamples.forEach((example) =>
-    geoTagStore.addGeoTag(new GeoTag( example[1], example[2], example[0], example[3] ))
+  geoTagStore.addGeoTag(new GeoTag(example[1], example[2], example[0], example[3]))
 )
 
 /**
@@ -70,13 +70,12 @@ router.post("/tagging", (req, res) => {
   let hash = body.hashtag?.charAt(0) === '#' ? body.hashtag : "";
 
   if (isNaN(lat) || isNaN(lon) || !name) {
-    res.render('index', { lat: "", lon: "", taglist: [] })
-    return;
+    res.status(400).json({ error: "Invalid input" }); return;
   }
 
   geoTagStore.addGeoTag(new GeoTag(lat, lon, name, hash));
 
-  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.getNearbyGeoTags(lat, lon) })
+  res.json(geoTagStore.getNearbyGeoTags(lat, lon));
 })
 
 /**
@@ -104,11 +103,11 @@ router.post("/discovery", (req, res) => {
   let searchterm = body.searchterm;
 
   if (isNaN(lat) || isNaN(lon)) {
-    res.render('index', { lat: "", lon: "", taglist: [] })
-    return
+    res.status(400).json({ error: "Invalid input" });
+    return;
   }
 
-  res.render('index', { lat: lat, lon: lon, taglist: geoTagStore.searchNearbyGeoTags(lat, lon, searchterm) })
-})
+  res.json(geoTagStore.searchNearbyGeoTags(lat, lon, searchterm));
+});
 
 module.exports = router;
