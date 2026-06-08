@@ -58,6 +58,9 @@ class InMemoryGeoTagStore{
     }
 
     updateGeoTag(newTag, id) {
+        id = parseInt(id);
+        if (isNaN(id)) return null;
+
         let index = this.#getIndexById(id);
         if (index === -1) return null;
 
@@ -130,7 +133,9 @@ class InMemoryGeoTagStore{
      * @return {GeoTag[]}
      */
     searchGeoTags(latitude, longitude, searchterm) {
-        return this.#geotags.filter((tag) => this.#geotagFilter(latitude, longitude, searchterm, tag));
+        return this.#geotags.filter(
+            (tag) => this.#geotagFilter(latitude, longitude, searchterm, tag)
+        );
     }
 
     /**

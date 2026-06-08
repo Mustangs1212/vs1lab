@@ -126,7 +126,7 @@ router.get("/api/geotags/page", (req, res) => {
 
   const {lat, lon, search} = validateQuery(req, res);
                        
-  res.send(geoTagStore.searchGeoTagsPage(lat, lon, search, lastId, pageSize));
+  res.status(201).send(geoTagStore.searchGeoTagsPage(lat, lon, search, lastId, pageSize));
 })
 
 

@@ -14,29 +14,29 @@ content-type: application/json
 GET http://127.0.0.1:3000/api/geotags
 
 ### Auslesen [2/2]
-GET http://127.0.0.1:3000/api/geotags/24
+GET http://127.0.0.1:3000/api/geotags/11
 
 
 ### Ändern
-PUT http://127.0.0.1:3000/api/geotags/24
+PUT http://127.0.0.1:3000/api/geotags/11
 content-type: application/json
 
 {
     "latitude": 19.569603,
     "longitude": -165.654487,
     "name": "Pacific",
-    "hashtag": "#inWater"
+    "hashtag": "#edu"
 }
 
 
 ### Suchen [1/3]
-GET http://127.0.0.1:3000/api/geotags?searchterm=cif
+GET http://127.0.0.1:3000/api/geotags?searchterm=%23edu
 
 ### Suchen [2/3]
 GET http://127.0.0.1:3000/api/geotags?latitude=19.57&longitude=-165.6545
 
 ### Suchen [3/3]
-GET http://127.0.0.1:3000/api/geotags?latitude=19.57&longitude=-165.6545?searchterm=ater
+GET http://127.0.0.1:3000/api/geotags?latitude=19.57&longitude=-165.6545?searchterm=cif
 
 ### Löschen
-DELETE http://127.0.0.1:3000/api/geotags/24
+DELETE http://127.0.0.1:3000/api/geotags/11
