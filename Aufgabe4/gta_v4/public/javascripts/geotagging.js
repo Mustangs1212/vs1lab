@@ -20,6 +20,7 @@ let disResults;
 let discoveryNext;
 let discoveryPrev;
 let dixcoveryCurrentPage;
+
 let maxPage;
 let nextId;
 let prevId;
@@ -123,9 +124,7 @@ function updatePageControlls(meta) {
     maxPage.innerText = meta.pageCount;
 }
 
-async function f(id) {
-    event.preventDefault();
-
+async function updateDiscovery(id) {
     let search = encodeURIComponent(disSearchterm.value);
     search = disSearchterm.value ? `&searchterm=${search}` : ``;
 
@@ -140,6 +139,7 @@ async function f(id) {
         + `&longitude=${lon}`
         + search
     ).then(response => response.json());
+
     const tags = res.data;
     const meta = res.meta;
 
@@ -148,7 +148,9 @@ async function f(id) {
 
     // update list
     disResults.innerHTML = "";
-    tags.forEach((gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`);
+    tags.forEach(
+        (gtag) => disResults.innerHTML += `<li>${gtag.name} (${gtag.latitude}, ${gtag.longitude}) ${gtag.hashtag}</li>`
+    );
 
     // update map
     manager.updateMarkers(lat, lon, res.data);
@@ -159,33 +161,35 @@ async function postGeoTag(event) {
 
     console.log(tagHash.value);
 
+    const hash = tagHash.value;
+    const name = tagName.value;
+
+    tagHash.value = "";
+    tagName.value = "";
+
     fetch("http://localhost:3000/api/geotags", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: `{\
             "latitude": ${parseFloat(tagLatitude.value)},\
             "longitude": ${parseFloat(tagLongitude.value)},\
-            "name": "${tagName.value}"\
-            ${(tagHash.value === "" ? "" : `,"hashtag": "${tagHash.value}"` )}\
+            "name": "${name}"\
+            ${(hash === "" ? "" : `,"hashtag": "${hash}"` )}\
         }`
     })
-    .then(response => response.json())
-
-    tagHash.value = "";
-    tagName.value= "";
 }
 
 async function discoverTags(event) {
     event.preventDefault();
-    f(0);
+    updateDiscovery(0);
 }
 
 async function nextPage(event) {
     event.preventDefault();
-    f(nextId);
+    updateDiscovery(nextId);
 }
 
 async function prevPage(event) {
     event.preventDefault();
-    f(prevId);
+    updateDiscovery(prevId);
 }
